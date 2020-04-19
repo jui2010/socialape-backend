@@ -2,23 +2,8 @@ const {db} = require('../util/admin')
 const {firebase} = require('../util/config')
 
 
-//const {validateSignupData,validateLoginData}  = require('../util/validators')
+const {validateSignupData,validateLoginData}  = require('../util/validators')
 //validate the email, passwd, handle
-const isEmail = (email) => {
-    const regex = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/
-    if(email.match(regex)){
-        return true
-    }else{
-        return false
-    }
-}
-const isEmpty = (string) => {
-    if(string.trim() === ''){
-        return true
-    }else{
-        return false
-    }
-}
 
 exports.signup = (req, res) => {
     const newUser = {
@@ -28,30 +13,11 @@ exports.signup = (req, res) => {
         handle : req.body.handle
     }
 
-    let errors ={}
-
-    if(isEmpty(newUser.email)){
-        errors.email = "Must not be empty"
-    } else if(!isEmail(newUser.email)){
-        errors.email = "Must be a valid email"
-    }
-
-    if(isEmpty(newUser.password)){
-        errors.password = "Must not be empty"
-    }
-
-    if(newUser.password !== newUser.confirmPassword){
-        errors.confirmPassword = "Passwords must match"
-    }
-
-    if(isEmpty(newUser.handle)){
-        errors.handle = "Must not be empty"
-    }
-
-    //check the errors object before proceeding, to check if the errors object is empty
-    if(Object.keys(errors).length > 0){
+    let {errors , valid } = validateSignupData(newUser)
+    if(!valid){
         return res.status(400).json(errors)
     }
+
 
     //TODO validate user
     let token, userId
@@ -97,18 +63,8 @@ exports.login = (req, res) => {
         password : req.body.password
     }
 
-    let errors ={}
-
-    if(isEmpty(user.email)){
-        errors.email = "Must not be empty"
-    }
-
-    if(isEmpty(user.password)){
-        errors.password = "Must not be empty"
-    }
-
-    //check the errors object before proceeding, to check if the errors object is empty
-    if(Object.keys(errors).length > 0){
+    let {errors, valid } = validateLoginData(user)
+    if(!valid){
         return res.status(400).json(errors)
     }
 
