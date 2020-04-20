@@ -13,7 +13,6 @@ module.exports = (req, res, next) => {
     admin.auth().verifyIdToken(idToken)
     .then(decodedToken => {
         req.user = decodedToken
-        console.log(decodedToken)
         return db.collection('users')
             .where('userId' , '==' , req.user.uid)
             .limit(1)
@@ -24,7 +23,7 @@ module.exports = (req, res, next) => {
         return next()
     })
     .catch(err => {
-        console.error('Error while verifying ' ,err)
+        console.error('Error while verifying ' , err)
         return res.status(403).json(err)
     })
 }

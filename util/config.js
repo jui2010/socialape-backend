@@ -14,5 +14,5 @@ const firebaseConfig  = {
 const firebase = require('firebase')
 firebase.initializeApp(firebaseConfig)
 
-module.exports = {firebase}
+module.exports = {firebase, firebaseConfig}
 
